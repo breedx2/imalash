@@ -1,0 +1,13 @@
+{
+    "name": "imalash",
+    "version": "0.0.1",
+    "description": "imalash",
+    "main": "imalash.js",
+    "author": "breedx",
+    "dependencies": {
+        "commander": "latest",
+		"lwip": "latest",
+		"get-pixels": "latest",
+		"pngjs": "latest"
+    }
+}

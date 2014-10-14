@@ -6,8 +6,8 @@
     "author": "breedx",
     "dependencies": {
         "commander": "latest",
-		"lwip": "latest",
-		"get-pixels": "latest",
-		"pngjs": "latest"
+        "lwip": "latest",
+        "get-pixels": "latest",
+        "pngjs": "latest"
     }
 }

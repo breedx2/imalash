@@ -44,7 +44,7 @@ function hexify(pixels, x, y, z){
 function dumpPixelArray(image){
 	return function(err, pixels){
 		var varname = filename.replace(/\..*/, '');
-		process.stdout.write("uint8_t " + varname + " = {");
+		process.stdout.write("uint8_t " + varname + "[" + image.width() + "][" + image.height() + "[3] = {");
 		for(var y = 0; y < image.height() ; y++){
 			if(y > 0){
 				process.stdout.write(', ');

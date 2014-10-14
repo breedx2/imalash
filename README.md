@@ -30,6 +30,7 @@ $ node imalash.js --help
     -V, --version          output the version number
     -w, --width <width>    Width of output image
     -h, --height <height>  Height of output image
+    -d, --decimal          Use decimal output instead of hex
 
 ```
 

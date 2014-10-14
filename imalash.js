@@ -50,7 +50,7 @@ function dumpPixelArray(image){
 				process.stdout.write(', ');
 			}
 			process.stdout.write("\n\t{");
-			for(var x = 0; x < image.width() ; x+= 3){
+			for(var x = 0; x < image.width() ; x++){
 				if(x > 0){
 					process.stdout.write(', ');
 				}

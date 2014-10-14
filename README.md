@@ -37,7 +37,7 @@ $ node imalash.js --help
 example:
 -------
 
-`$ node imalash.js -w 20 -h 20 test.png`
+`$ node imalash.js -w 8 -h 8 test.png`
 
 and the output looks like:
 ```

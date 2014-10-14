@@ -21,12 +21,16 @@ lwip.open(filename, function(err, image){
 		.resize(width, height, "cubic")
 		.writeFile('imalash.temp.jpg', function(err){
 			getpixels('imalash.temp.jpg', 'image/jpeg', dumpPixelArray(image));
-			//fs.unlink('imalash.temp.jpg');
+			fs.unlink('imalash.temp.jpg');
 		});
 });
 
 function hexify(pixels, x, y, z){
-	return "0x" + pixels.get(x, y, z).toString(16).toUpperCase();
+	var suffix = pixels.get(x, y, z).toString(16).toUpperCase();
+	if(suffix.length < 2){
+		suffix = "0" + suffix;
+	}
+	return "0x" + suffix;
 }
 
 function dumpPixelArray(image){

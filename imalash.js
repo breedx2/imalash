@@ -18,14 +18,20 @@ if(!filename){
 lwip.open(filename, function(err, image){
 	var width = program.width ? program.width : image.width();
 	var height = program.height ? program.height : image.height();
-	var decimal = program.decimal ? true : false;
 	image.batch()
 		.resize(width, height, "cubic")
 		.writeFile('imalash.temp.jpg', function(err){
-			getpixels('imalash.temp.jpg', 'image/jpeg', dumpPixelArray(image, decimal));
+			getpixels('imalash.temp.jpg', 'image/jpeg', dumpPixelArray(image));
 			fs.unlink('imalash.temp.jpg');
 		});
 });
+
+function format(pixels, x, y, z){
+	if(program.decimal){
+		return parseInt(pixels.get(x, y, z));
+	}
+	return hexify(pixels, x, y, z);
+}
 
 function hexify(pixels, x, y, z){
 	var suffix = pixels.get(x, y, z).toString(16).toUpperCase();
@@ -35,7 +41,7 @@ function hexify(pixels, x, y, z){
 	return "0x" + suffix;
 }
 
-function dumpPixelArray(image, decimal){
+function dumpPixelArray(image){
 	return function(err, pixels){
 		var varname = filename.replace(/\..*/, '');
 		process.stdout.write("uint8_t " + varname + " = {");
@@ -49,13 +55,10 @@ function dumpPixelArray(image, decimal){
 					process.stdout.write(', ');
 				}
 				
-				var r = hexify(pixels, x, y, 0);
-				var g = hexify(pixels, x, y, 1);
-				var b = hexify(pixels, x, y, 2);
-				if(decimal)
-					process.stdout.write("{" + parseInt(r) + "," + parseInt(g) + "," + parseInt(b) + "}");
-				else
-					process.stdout.write("{" + r + "," + g + "," + b + "}");
+				var r = format(pixels, x, y, 0);
+				var g = format(pixels, x, y, 1);
+				var b = format(pixels, x, y, 2);
+				process.stdout.write("{" + r + "," + g + "," + b + "}");
 			}
 			process.stdout.write("}");
 		}

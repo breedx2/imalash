@@ -19,10 +19,10 @@ lwip.open(filename, function(err, image){
 	var width = program.width ? program.width : image.width();
 	var height = program.height ? program.height : image.height();
 	image.batch()
-		.resize(width, height, "cubic")
+		// .resize(width, height, "grid")
 		.writeFile('imalash.temp.jpg', function(err){
 			getpixels('imalash.temp.jpg', 'image/jpeg', dumpPixelArray(image));
-			fs.unlink('imalash.temp.jpg');
+			// fs.unlink('imalash.temp.jpg');
 		});
 });
 

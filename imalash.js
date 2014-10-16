@@ -7,6 +7,7 @@ program.version('0.0.1')
     .option('-w, --width <width>', 'Width of output image')
     .option('-h, --height <height>', 'Height of output image')
     .option('-d, --decimal', 'Print RGB decimal notation instead of hex')
+    .option('-t, --temp', 'Save the resize temp file')
     .parse(process.argv);
 
 var filename = program.args[0]
@@ -18,11 +19,15 @@ if(!filename){
 lwip.open(filename, function(err, image){
 	var width = program.width ? program.width : image.width();
 	var height = program.height ? program.height : image.height();
+	var tmpFileName = 'imalash.temp.png';
+	var tmpFormat = 'image/png';
 	image.batch()
-		// .resize(width, height, "grid")
-		.writeFile('imalash.temp.jpg', function(err){
-			getpixels('imalash.temp.jpg', 'image/jpeg', dumpPixelArray(image));
-			// fs.unlink('imalash.temp.jpg');
+	    .resize(width, height, "grid")
+		.writeFile(tmpFileName, function(err){
+			getpixels(tmpFileName, tmpFormat, dumpPixelArray(image));
+			if(!program.temp){
+				fs.unlink(tmpFileName);
+			}
 		});
 });
 
@@ -44,7 +49,7 @@ function hexify(pixels, x, y, z){
 function dumpPixelArray(image){
 	return function(err, pixels){
 		var varname = filename.replace(/\..*/, '');
-		process.stdout.write("uint8_t " + varname + "[" + image.width() + "][" + image.height() + "][3] = {");
+		process.stdout.write("uint8_t const " + varname + "[" + image.height() + "][" + image.width() + "][3] PROGMEM = {");
 		for(var y = 0; y < image.height() ; y++){
 			if(y > 0){
 				process.stdout.write(', ');

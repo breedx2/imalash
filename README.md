@@ -31,6 +31,7 @@ $ node imalash.js --help
     -w, --width <width>    Width of output image
     -h, --height <height>  Height of output image
     -d, --decimal          Use decimal output instead of hex
+    -t, --temp             Save the resize temp file
 
 ```
 

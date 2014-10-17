@@ -96,7 +96,7 @@ function dumpPixelArray(image){
 				}
 				process.stdout.write("}");
 			}
-			console.log("\n};");
+			process.stdout.write("\n};");
 		}
 	}
 }

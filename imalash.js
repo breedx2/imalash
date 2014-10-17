@@ -67,9 +67,9 @@ function dumpPixelArray(image){
 
 					process.stdout.write(r + "," + g + "," + b);
 				}
-				if(y != image.height() - 1){
-					process.stdout.write(",");
-				}
+				// if(y != image.height() - 1){
+				// 	process.stdout.write("/,");
+				// }
 			}
 			process.stdout.write("};\n");
 			process.stdout.write("uint8_t const " + varname + "_w = " + image.width() + ";\n");

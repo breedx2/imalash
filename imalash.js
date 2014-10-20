@@ -96,7 +96,6 @@ function dump3D(image, pixels){
 
 function dumpPixelArray(image){
 	return function(err, pixels){
-		var varname = filename.replace(/\..*/, '');
 		if(program.simple){ //output a single dimension array with variables indicating parse info
 			dump1D(image, pixels);
 		} else { //output a 3D array with dimensions [image.height][image.width][3]

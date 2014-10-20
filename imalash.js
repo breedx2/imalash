@@ -8,6 +8,7 @@ program.version('0.0.1')
     .option('-h, --height <height>', 'Height of output image')
     .option('-d, --decimal', 'Print RGB decimal notation instead of hex')
     .option('-t, --temp', 'Save the resize temp file')
+    .option('-s, --simple', 'Simple output: a 1 dimension array with defined bounds')
     .parse(process.argv);
 
 var filename = program.args[0]
@@ -49,24 +50,52 @@ function hexify(pixels, x, y, z){
 function dumpPixelArray(image){
 	return function(err, pixels){
 		var varname = filename.replace(/\..*/, '');
-		process.stdout.write("uint8_t const " + varname + "[" + image.height() + "][" + image.width() + "][3] PROGMEM = {");
-		for(var y = 0; y < image.height() ; y++){
-			if(y > 0){
-				process.stdout.write(', ');
-			}
-			process.stdout.write("\n\t{");
-			for(var x = 0; x < image.width() ; x++){
-				if(x > 0){
+		if(program.simple){ //output a single dimension array with variables indicating parse info
+			process.stdout.write("uint8_t const " + varname + "[" + (image.height() * image.width() * 3) + "] PROGMEM = {");
+			for(var y = 0; y < image.height() ; y++){
+				if(y > 0){
 					process.stdout.write(', ');
 				}
-				
-				var r = format(pixels, x, y, 0);
-				var g = format(pixels, x, y, 1);
-				var b = format(pixels, x, y, 2);
-				process.stdout.write("{" + r + "," + g + "," + b + "}");
+				for(var x = 0; x < image.width() ; x++){
+					if(x > 0){
+						process.stdout.write(', ');
+					}
+					
+					var r = format(pixels, x, y, 0);
+					var g = format(pixels, x, y, 1);
+					var b = format(pixels, x, y, 2);
+
+					process.stdout.write(r + "," + g + "," + b);
+				}
+				// if(y != image.height() - 1){
+				// 	process.stdout.write("/,");
+				// }
 			}
-			process.stdout.write("}");
+			process.stdout.write("};\n");
+			process.stdout.write("uint8_t const " + varname + "_w = " + image.width() + ";\n");
+			process.stdout.write("uint8_t const " + varname + "_h = " + image.height() + ";\n");
+
+		} else { //output a 3D array with dimensions [image.height][image.width][3]
+			process.stdout.write("uint8_t const " + varname + "[" + image.height() + "][" + image.width() + "][3] PROGMEM = {");
+			for(var y = 0; y < image.height() ; y++){
+				if(y > 0){
+					process.stdout.write(', ');
+				}
+				process.stdout.write("\n\t{");
+				for(var x = 0; x < image.width() ; x++){
+					if(x > 0){
+						process.stdout.write(', ');
+					}
+					
+					var r = format(pixels, x, y, 0);
+					var g = format(pixels, x, y, 1);
+					var b = format(pixels, x, y, 2);
+
+					process.stdout.write("{" + r + "," + g + "," + b + "}");
+				}
+				process.stdout.write("}");
+			}
+			process.stdout.write("\n};");
 		}
-		console.log("\n};");
 	}
 }

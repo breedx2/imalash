@@ -58,20 +58,26 @@ function makeVarName(){
 	return filename.replace(/\..*/, '');
 }
 
-//output a single dimension array with variables indicating parse info
-function dump1D(image, pixels){
-	process.stdout.write("uint8_t const " + makeVarName() + "[" + (image.height() * image.width() * 3) + "] PROGMEM = {");
+function dump(image, pixels, rowStart, pixelPrinter, rowEnd){
 	for(var y = 0; y < image.height() ; y++){
 		if(y > 0){
 			process.stdout.write(', ');
 		}
+		process.stdout.write(rowStart);
 		for(var x = 0; x < image.width() ; x++){
 			if(x > 0){
 				process.stdout.write(', ');
 			}
-			printRGB(pixels, x, y);
+			pixelPrinter(pixels, x, y);
 		}
+		process.stdout.write(rowEnd);
 	}
+}
+
+//output a single dimension array with variables indicating parse info
+function dump1D(image, pixels){
+	process.stdout.write("uint8_t const " + makeVarName() + "[" + (image.height() * image.width() * 3) + "] PROGMEM = {");
+	dump(image, pixels, '', printRGB, '');
 	process.stdout.write("};\n");
 	process.stdout.write("uint8_t const " + makeVarName() + "_w = " + image.width() + ";\n");
 	process.stdout.write("uint8_t const " + makeVarName() + "_h = " + image.height() + ";\n");
@@ -80,23 +86,12 @@ function dump1D(image, pixels){
 //output a 3D array with dimensions [image.height][image.width][3]
 function dump3D(image, pixels){
 	process.stdout.write("uint8_t const " + makeVarName() + "[" + image.height() + "][" + image.width() + "][3] PROGMEM = {");
-	for(var y = 0; y < image.height() ; y++){
-		if(y > 0){
-			process.stdout.write(', ');
-		}
-		process.stdout.write("\n\t{");
-		for(var x = 0; x < image.width() ; x++){
-			if(x > 0){
-				process.stdout.write(', ');
-			}
-			process.stdout.write("{")
-			printRGB(pixels, x, y);
-			process.stdout.write("}");
-		}
+	dump(image, pixels, "\n\t{", function(pixels, x, y){
+		process.stdout.write("{")
+		printRGB(pixels, x, y);
 		process.stdout.write("}");
-	}
+	}, "}");
 	process.stdout.write("\n};\n");
-
 }
 
 function dumpPixelArray(image){

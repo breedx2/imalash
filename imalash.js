@@ -47,6 +47,13 @@ function hexify(pixels, x, y, z){
 	return "0x" + suffix;
 }
 
+function printRGB(pixels, x, y){
+	var r = format(pixels, x, y, 0);
+	var g = format(pixels, x, y, 1);
+	var b = format(pixels, x, y, 2);
+	process.stdout.write(r + "," + g + "," + b);
+}
+
 function dumpPixelArray(image){
 	return function(err, pixels){
 		var varname = filename.replace(/\..*/, '');
@@ -60,16 +67,8 @@ function dumpPixelArray(image){
 					if(x > 0){
 						process.stdout.write(', ');
 					}
-					
-					var r = format(pixels, x, y, 0);
-					var g = format(pixels, x, y, 1);
-					var b = format(pixels, x, y, 2);
-
-					process.stdout.write(r + "," + g + "," + b);
+					printRGB(pixels, x, y);
 				}
-				// if(y != image.height() - 1){
-				// 	process.stdout.write("/,");
-				// }
 			}
 			process.stdout.write("};\n");
 			process.stdout.write("uint8_t const " + varname + "_w = " + image.width() + ";\n");
@@ -86,12 +85,9 @@ function dumpPixelArray(image){
 					if(x > 0){
 						process.stdout.write(', ');
 					}
-					
-					var r = format(pixels, x, y, 0);
-					var g = format(pixels, x, y, 1);
-					var b = format(pixels, x, y, 2);
-
-					process.stdout.write("{" + r + "," + g + "," + b + "}");
+					process.stdout.write("{")
+					printRGB(pixels, x, y);
+					process.stdout.write("}");
 				}
 				process.stdout.write("}");
 			}

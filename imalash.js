@@ -9,7 +9,7 @@ program.version('0.0.1')
     .option('-d, --decimal', 'Print RGB decimal notation instead of hex')
     .option('-t, --temp', 'Save the resize temp file')
     .option('-s, --simple', 'Simple output: a 1 dimension array with defined bounds')
-    .option('-j, --json', 'JSON output: a 2D array of {r:[0-255] g:[0-255] b:[0-255]} objects')
+    .option('-j, --js', 'Javascript output: a 2D array of {r:[0-255] g:[0-255] b:[0-255]} objects')
     .parse(process.argv);
 
 var filename = program.args[0]
@@ -99,7 +99,7 @@ function dump3D(image, pixels){
 	process.stdout.write("\n};\n");
 }
 
-//output a 2D json array of r/g/b objects
+//output a 2D js array of r/g/b objects
 function dumpJSON(image, pixels){
 	process.stdout.write("var " + makeVarName() + " = [");
 
@@ -116,7 +116,7 @@ function dumpPixelArray(image){
 	return function(err, pixels){
 		if(program.simple){ //output a single dimension array with variables indicating parse info
 			dump1D(image, pixels);
-		} else if(program.json) {
+		} else if(program.js) {
 			dumpJSON(image, pixels);
 		} else { //output a 3D array with dimensions [image.height][image.width][3]
 			dump3D(image, pixels);

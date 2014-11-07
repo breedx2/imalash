@@ -32,7 +32,8 @@ $ node imalash.js --help
     -h, --height <height>  Height of output image
     -d, --decimal          Use decimal output instead of hex
     -t, --temp             Save the resize temp file
-    -s, --simple           Simple output: a 1 dimension array with defined bounds
+    -s, --simple           Simple output: a 1 dimension C array with defined bounds
+    -j, --js               Javascript output: a 2D array of {r:[0-255] g:[0-255] b:[0-255]} objects
 
 ```
 

@@ -9,6 +9,7 @@ program.version('0.0.1')
     .option('-d, --decimal', 'Print RGB decimal notation instead of hex')
     .option('-t, --temp', 'Save the resize temp file')
     .option('-s, --simple', 'Simple output: a 1 dimension array with defined bounds')
+    .option('-j, --json', 'JSON output: a 2D array of {r:[0-255] g:[0-255] b:[0-255]} objects')
     .parse(process.argv);
 
 var filename = program.args[0]
@@ -17,7 +18,7 @@ if(!filename){
 	process.exit(code = 1);
 }
 
-lwip.open(filename, function(err, image){
+lwip.open(filename, function(err, image) {
 	var width = program.width ? program.width : image.width();
 	var height = program.height ? program.height : image.height();
 	var tmpFileName = 'imalash.temp.png';
@@ -47,11 +48,15 @@ function hexify(pixels, x, y, z){
 	return "0x" + suffix;
 }
 
-function printRGB(pixels, x, y){
+function printRGB(pixels, x, y, json){
 	var r = format(pixels, x, y, 0);
 	var g = format(pixels, x, y, 1);
 	var b = format(pixels, x, y, 2);
-	process.stdout.write(r + "," + g + "," + b);
+	if(json) {
+		process.stdout.write("{r: " + r + ", g:" + g + ", b:" + b + "}");
+	} else {
+		process.stdout.write(r + "," + g + "," + b);
+	}
 }
 
 function makeVarName(){
@@ -94,10 +99,25 @@ function dump3D(image, pixels){
 	process.stdout.write("\n};\n");
 }
 
+//output a 2D json array of r/g/b objects
+function dumpJSON(image, pixels){
+	process.stdout.write("var " + makeVarName() + " = [");
+
+	// dump(image, pixels, rowStart, pixelPrinter, rowEnd)
+
+	dump(image, pixels, "\n\t[", function(pixels, x, y){
+			printRGB(pixels, x, y, true);
+		}, "]");
+
+	process.stdout.write("];\n");
+}
+
 function dumpPixelArray(image){
 	return function(err, pixels){
 		if(program.simple){ //output a single dimension array with variables indicating parse info
 			dump1D(image, pixels);
+		} else if(program.json) {
+			dumpJSON(image, pixels);
 		} else { //output a 3D array with dimensions [image.height][image.width][3]
 			dump3D(image, pixels);
 		}
